@@ -1,3 +1,10 @@
+dropbear (0.47-1.slind2) unstable; urgency=low
+
+  * Update section field to 'security'.
+  * Change maintainer email.
+
+ -- Alexander Shishkin <virtuoso@slind.org>  Thu, 12 Jul 2007 14:35:29 +0400
+
 dropbear (0.47-1.slind1) unstable; urgency=low
 
   * New build dependencies

@@ -1,7 +1,7 @@
 Source: dropbear
-Section: net
+Section: security
 Priority: optional
-Maintainer: Alexander Shishkin <alexander.shishkin@siemens.com>
+Maintainer: Alexander Shishkin <virtuoso@slind.org>
 XCS-Cross-Build-Depends: libz-dev
 Build-Depends: libz-dev
 Standards-Version: 3.6.2.1

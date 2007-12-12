@@ -1,3 +1,9 @@
+dropbear (0.47-1.slind3) unstable; urgency=low
+
+  * Use /dev/urandom instead of /dev/random
+
+ -- Dmitry Baryshkov <dbaryshkov@slind.org>  Wed, 12 Dec 2007 17:01:10 +0300
+
 dropbear (0.47-1.slind2) unstable; urgency=low
 
   * Update section field to 'security'.

@@ -42,7 +42,7 @@ config.status: patch-stamp configure
 
 build: deb-checkdir build-stamp
 build-stamp: config.status
-	$(MAKE) CC='$(CC)' LD='$(CC)'
+	$(MAKE) CC='$(CC)' LD='$(CC)' PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp"
 	touch build-stamp
 
 clean: deb-checkdir deb-checkuid
@@ -64,6 +64,7 @@ install: deb-checkdir deb-checkuid build-stamp
 	install -d -m0755 '$(DIR)'/usr/bin
 	install -m0755 dbclient '$(DIR)'/usr/bin/dbclient
 	install -m0755 dropbearkey '$(DIR)'/usr/bin/dropbearkey
+	install -m0755 scp '$(DIR)'/usr/bin/scp
 	install -d -m0755 '$(DIR)'/usr/lib/dropbear
 	install -m0755 dropbearconvert \
 	  '$(DIR)'/usr/lib/dropbear/dropbearconvert

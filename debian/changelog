@@ -1,3 +1,10 @@
+dropbear (0.47-1.slind4) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Also build scp
+
+ -- Dmitry Baryshkov <dbaryshkov@slind.org>  Thu, 10 Jan 2008 15:55:56 +0300
+
 dropbear (0.47-1.slind3) unstable; urgency=low
 
   * Use /dev/urandom instead of /dev/random

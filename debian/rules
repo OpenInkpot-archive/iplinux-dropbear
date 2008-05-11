@@ -24,6 +24,7 @@ ifneq (,$(findstring diet,$(DEB_BUILD_OPTIONS)))
 endif
 
 DIR =$(shell pwd)/debian/dropbear
+UTILS_DIR =$(shell pwd)/debian/dropbear-utils
 
 patch: deb-checkdir patch-stamp
 patch-stamp:
@@ -56,20 +57,20 @@ clean: deb-checkdir deb-checkuid
 	rm -f debian/files debian/substvars debian/copyright changelog
 
 install: deb-checkdir deb-checkuid build-stamp
-	rm -rf '$(DIR)'
+	rm -rf '$(DIR)' '$(UTILS_DIR)'
 	install -d -m0755 '$(DIR)'/etc/dropbear
 	# programs
 	install -d -m0755 '$(DIR)'/usr/sbin
 	install -m0755 dropbear '$(DIR)'/usr/sbin/dropbear
 	install -d -m0755 '$(DIR)'/usr/bin
 	install -m0755 dbclient '$(DIR)'/usr/bin/dbclient
-	install -m0755 dropbearkey '$(DIR)'/usr/bin/dropbearkey
 	install -m0755 scp '$(DIR)'/usr/bin/scp
-	install -d -m0755 '$(DIR)'/usr/lib/dropbear
+	install -d -m0755 '$(UTILS_DIR)'/usr/bin
+	install -m0755 dropbearkey '$(UTILS_DIR)'/usr/bin/dropbearkey
 	install -m0755 dropbearconvert \
-	  '$(DIR)'/usr/lib/dropbear/dropbearconvert
+	  '$(UTILS_DIR)'/usr/bin/dropbearconvert
 	$(STRIP) -R .comment -R .note '$(DIR)'/usr/sbin/* \
-	  '$(DIR)'/usr/bin/* '$(DIR)'/usr/lib/dropbear/*
+	  '$(DIR)'/usr/bin/* '$(UTILS_DIRDIR)'/usr/bin/*
 	# init and run scripts
 	install -d -m0755 '$(DIR)'/etc/init.d
 	install -m0755 debian/dropbear.init '$(DIR)'/etc/init.d/dropbear
@@ -79,8 +80,8 @@ install: deb-checkdir deb-checkuid build-stamp
 	ln -s /var/log/dropbear '$(DIR)'/etc/dropbear/log/main
 	ln -s /var/run/dropbear '$(DIR)'/etc/dropbear/supervise
 	ln -s /var/run/dropbear.log '$(DIR)'/etc/dropbear/log/supervise
-	# man pages
 ifeq ($(INSTALL_DOCS),yes)
+	# man pages
 	install -d -m0755 '$(DIR)'/usr/share/man/man8
 	for i in dropbear.8 dropbearkey.8; do \
 	  install -m644 $$i '$(DIR)'/usr/share/man/man8/ || exit 1; \
@@ -97,10 +98,12 @@ endif
 binary-indep:
 
 binary-arch: install dropbear.deb
-	dpkg-shlibdeps '$(DIR)'/usr/sbin/* '$(DIR)'/usr/bin/* \
-		'$(DIR)'/usr/lib/dropbear/*
+	dpkg-shlibdeps '$(DIR)'/usr/sbin/* '$(DIR)'/usr/bin/*
 	dpkg-gencontrol -isp -pdropbear -P'$(DIR)'
 	dpkg -b '$(DIR)' ..
+	dpkg-shlibdeps '$(UTILS_DIR)'/usr/bin/*
+	dpkg-gencontrol -isp -pdropbear-utils -P'$(UTILS_DIR)'
+	dpkg -b '$(UTILS_DIR)' ..
 
 binary: binary-arch binary-indep
 

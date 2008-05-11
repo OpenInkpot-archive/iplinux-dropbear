@@ -6,7 +6,7 @@ dropbear (0.51-0.oi1) unstable; urgency=low
     initscript.
   * Killed OpenSSH hostkey conversion - those who change SSH servers may
     do it manually.
-  * Key generation conversion utilities moved to separate package.
+  * Key conversion utility moved to separate package.
 
  -- Mikhail Gusarov <dottedmag@dottedmag.net>  Sun, 11 May 2008 20:28:01 +0700
 

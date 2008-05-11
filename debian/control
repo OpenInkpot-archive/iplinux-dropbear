@@ -33,4 +33,4 @@ Description: lightweight SSH2 server and client
  features such as X11 and authentication agent forwarding.
  .
  This package contains dropbearconvert tool suitable to convert host- and
- userkeys from and to OpenSSH format and dropbearkey tool for keys generation.
+ userkeys from and to OpenSSH format.

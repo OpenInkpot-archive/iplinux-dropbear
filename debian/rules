@@ -54,12 +54,12 @@ install: deb-checkdir deb-checkuid build-stamp
 	install -d -m0755 '$(DIR)'/usr/bin
 	install -m0755 dbclient '$(DIR)'/usr/bin/dbclient
 	install -m0755 scp '$(DIR)'/usr/bin/scp
+	install -m0755 dropbearkey '$(DIR)'/usr/bin/dropbearkey
 	install -d -m0755 '$(UTILS_DIR)'/usr/bin
-	install -m0755 dropbearkey '$(UTILS_DIR)'/usr/bin/dropbearkey
 	install -m0755 dropbearconvert \
 	  '$(UTILS_DIR)'/usr/bin/dropbearconvert
 	$(STRIP) -R .comment -R .note '$(DIR)'/usr/sbin/* \
-	  '$(DIR)'/usr/bin/* '$(UTILS_DIRDIR)'/usr/bin/*
+	  '$(DIR)'/usr/bin/* '$(UTILS_DIR)'/usr/bin/*
 	# init and run scripts
 	install -d -m0755 '$(DIR)'/etc/init.d
 	install -m0755 debian/dropbear.init '$(DIR)'/etc/init.d/dropbear
@@ -86,7 +86,7 @@ endif
 
 binary-indep:
 
-binary-arch: install dropbear.deb
+binary-arch: install dropbear.deb dropbear-utils.deb
 	dpkg-shlibdeps '$(DIR)'/usr/sbin/* '$(DIR)'/usr/bin/*
 	dpkg-gencontrol -isp -pdropbear -P'$(DIR)'
 	dpkg -b '$(DIR)' ..

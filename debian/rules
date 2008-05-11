@@ -26,14 +26,7 @@ endif
 DIR =$(shell pwd)/debian/dropbear
 UTILS_DIR =$(shell pwd)/debian/dropbear-utils
 
-patch: deb-checkdir patch-stamp
-patch-stamp:
-	for i in `ls -1 debian/diff/*.diff || :`; do \
-	  patch -p0 <$$i || exit 1; \
-	done
-	touch patch-stamp
-
-config.status: patch-stamp configure
+config.status: configure
 	CC='$(CC)' \
 	CFLAGS='$(CFLAGS)'' -DSFTPSERVER_PATH="\"/usr/lib/sftp-server\""' \
 	  ./configure --host='$(DEB_HOST_GNU_TYPE)' \
@@ -48,11 +41,7 @@ build-stamp: config.status
 
 clean: deb-checkdir deb-checkuid
 	-$(MAKE) distclean
-	test ! -e patch-stamp || \
-	  for i in `ls -1r debian/diff/*.diff || :`; do \
-	    patch -p0 -R <$$i; \
-	  done
-	rm -f patch-stamp build-stamp config.log config.status
+	rm -f build-stamp config.log config.status
 	rm -rf '$(DIR)'
 	rm -f debian/files debian/substvars debian/copyright changelog
 
@@ -107,6 +96,6 @@ binary-arch: install dropbear.deb
 
 binary: binary-arch binary-indep
 
-.PHONY: patch build clean install binary-indep binary-arch binary
+.PHONY: build clean install binary-indep binary-arch binary
 
 include debian/implicit

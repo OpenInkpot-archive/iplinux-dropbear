@@ -38,6 +38,10 @@ test -n "$DROPBEAR_RECEIVE_WINDOW" || \
   DROPBEAR_RECEIVE_WINDOW="65536"
 
 check_host_keys() {
+    test -e $DROPBEAR_RSAKEY && test -e $DROPBEAR_DSSKEY
+}
+
+generate_host_keys() {
   if test ! -e $DROPBEAR_RSAKEY; then
     echo "Generating Dropbear RSA key. Please wait."
     dropbearkey -t rsa -f $DROPBEAR_RSAKEY
@@ -48,15 +52,23 @@ check_host_keys() {
   fi
 }
 
-case "$1" in
-  start)
-    check_host_keys
-	test "$NO_START" = "0" || cancel 'NO_START is not set to zero.'
+start_dropbear() {
 	echo -n "Starting $DESC: "
 	start-stop-daemon --start --quiet --pidfile /var/run/"$NAME".pid \
-	  --exec "$DAEMON" -- -d "$DROPBEAR_DSSKEY" -r "$DROPBEAR_RSAKEY" \
+	    --exec "$DAEMON" -- -d "$DROPBEAR_DSSKEY" -r "$DROPBEAR_RSAKEY" \
 	    -p "$DROPBEAR_PORT" -W "$DROPBEAR_RECEIVE_WINDOW" $DROPBEAR_EXTRA_ARGS
 	echo "$NAME."
+}
+
+case "$1" in
+  start)
+	test "$NO_START" = "0" || cancel 'NO_START is not set to zero.'
+
+    if check_host_keys; then
+        start_dropbear
+    else
+        (generate_host_keys; start_dropbear)&
+    fi
 	;;
   stop)
 	echo -n "Stopping $DESC: "

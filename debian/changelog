@@ -1,8 +1,9 @@
-dropbear (0.51-0.oi2) UNRELEASED; urgency=low
+dropbear (0.51-0.oi2) unstable; urgency=low
 
   * Initscript improved: hostkeys generation moved to to background, so
     first boot won't be blocked by the long key generation stage on slow
     machines. dropbear will be started as soon as hostkeys are generated.
+  * Disabled runit integration.
 
  -- Mikhail Gusarov <dottedmag@dottedmag.net>  Sun, 24 Aug 2008 01:39:40 +0700
 

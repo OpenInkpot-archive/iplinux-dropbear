@@ -63,12 +63,6 @@ install: deb-checkdir deb-checkuid build-stamp
 	# init and run scripts
 	install -d -m0755 '$(DIR)'/etc/init.d
 	install -m0755 debian/dropbear.init '$(DIR)'/etc/init.d/dropbear
-	install -m0755 debian/service/run '$(DIR)'/etc/dropbear/run
-	install -d -m0755 '$(DIR)'/etc/dropbear/log
-	install -m0755 debian/service/log '$(DIR)'/etc/dropbear/log/run
-	ln -s /var/log/dropbear '$(DIR)'/etc/dropbear/log/main
-	ln -s /var/run/dropbear '$(DIR)'/etc/dropbear/supervise
-	ln -s /var/run/dropbear.log '$(DIR)'/etc/dropbear/log/supervise
 ifeq ($(INSTALL_DOCS),yes)
 	# man pages
 	install -d -m0755 '$(DIR)'/usr/share/man/man8

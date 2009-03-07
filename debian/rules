@@ -17,17 +17,14 @@ else
 endif
 
 CONFFLAGS =
-CC =gcc
 ifneq (,$(findstring diet,$(DEB_BUILD_OPTIONS)))
   CONFFLAGS =--disable-zlib
-  CC =diet -v -Os gcc -nostdinc
 endif
 
 DIR =$(shell pwd)/debian/dropbear
 UTILS_DIR =$(shell pwd)/debian/dropbear-utils
 
 config.status: configure
-	CC='$(CC)' \
 	CFLAGS='$(CFLAGS)'' -DSFTPSERVER_PATH="\"/usr/lib/sftp-server\""' \
 	  ./configure --host='$(DEB_HOST_GNU_TYPE)' \
 	    --build='$(DEB_BUILD_GNU_TYPE)' --prefix=/usr \
@@ -36,7 +33,7 @@ config.status: configure
 
 build: deb-checkdir build-stamp
 build-stamp: config.status
-	$(MAKE) CC='$(CC)' LD='$(CC)' PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp"
+	$(MAKE) PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp"
 	touch build-stamp
 
 clean: deb-checkdir deb-checkuid

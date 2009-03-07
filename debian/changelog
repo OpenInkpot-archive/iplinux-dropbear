@@ -1,3 +1,9 @@
+dropbear (0.51-1.ip2) asimov; urgency=low
+
+  * Removed CC=gcc from the debian/rules.
+
+ -- Mikhail Gusarov <dottedmag@dottedmag.net>  Sat, 07 Mar 2009 23:38:08 +0600
+
 dropbear (0.51-1.ip1) asimov; urgency=low
 
   * First build for IPlinux.

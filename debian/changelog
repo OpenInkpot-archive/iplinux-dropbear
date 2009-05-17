@@ -1,3 +1,10 @@
+dropbear (0.51-1.ip3) asimov; urgency=low
+
+  * Improved key generation robustness: do not leave empty hostkey files
+    if device has been reset during key generation.
+
+ -- Mikhail Gusarov <dottedmag@dottedmag.net>  Sun, 17 May 2009 13:59:12 +0700
+
 dropbear (0.51-1.ip2+b1) asimov; urgency=low
 
   * Rebuild with new toolchain.

@@ -44,11 +44,13 @@ check_host_keys() {
 generate_host_keys() {
   if test ! -e $DROPBEAR_RSAKEY; then
     echo "Generating Dropbear RSA key. Please wait."
-    dropbearkey -t rsa -f $DROPBEAR_RSAKEY
+    dropbearkey -t rsa -f $DROPBEAR_RSAKEY.tmp
+    mv $DROPBEAR_RSAKEY.tmp $DROPBEAR_RSAKEY
   fi
   if test ! -e $DROPBEAR_DSSKEY; then
     echo "Generating Dropbear DSS key. Please wait."
-    dropbearkey -t dss -f $DROPBEAR_DSSKEY
+    dropbearkey -t dss -f $DROPBEAR_DSSKEY.tmp
+    mv $DROPBEAR_DSSKEY.tmp $DROPBEAR_DSSKEY
   fi
 }
 

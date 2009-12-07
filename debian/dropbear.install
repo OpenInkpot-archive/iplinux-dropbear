@@ -1,0 +1,4 @@
+usr/bin/dbclient
+usr/bin/dropbearkey
+usr/bin/scp
+usr/sbin/dropbear

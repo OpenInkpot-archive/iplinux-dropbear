@@ -2,8 +2,9 @@ Source: dropbear
 Section: core
 Priority: optional
 Maintainer: Mikhail Gusarov <dottedmag@dottedmag.net>
+XCS-Cross-Host-Build-Depends: debhelper
 XCS-Cross-Build-Depends: libz1-dev
-Build-Depends: zlib1g-dev
+Build-Depends: debhelper, zlib1g-dev
 Standards-Version: 3.8.3
 
 Package: dropbear
@@ -23,7 +24,7 @@ Package: dropbear-utils
 Architecture: any
 Depends: ${shlibs:Depends}
 Suggests: dropbear
-Description: lightweight SSH2 server and client
+Description: lightweight SSH2 server and client -- utilities
  dropbear is a SSH 2 server and client designed to be small enough to
  be used in small memory environments, while still being functional and
  secure enough for general use.
@@ -33,3 +34,17 @@ Description: lightweight SSH2 server and client
  .
  This package contains dropbearconvert tool suitable to convert host- and
  userkeys from and to OpenSSH format.
+
+Package: dropbear-dbg
+Architecture: any
+Section: debug
+Depends: dropbear (= ${binary:Version}), ${shlibs:Depends}
+Description: lightweight SSH2 server and client -- debug package
+ dropbear is a SSH 2 server and client designed to be small enough to
+ be used in small memory environments, while still being functional and
+ secure enough for general use.
+ .
+ It implements most required features of the SSH 2 protocol, and other
+ features such as X11 and authentication agent forwarding.
+ .
+ This package contains debugging symbols.

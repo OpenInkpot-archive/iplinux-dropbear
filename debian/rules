@@ -1,14 +1,5 @@
 #!/usr/bin/make -f
 
-#export DH_OPTIONS
-DEB_HOST_GNU_TYPE ?=$(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
-DEB_BUILD_GNU_TYPE ?=$(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
-
-STRIP =strip
-ifneq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
-  STRIP =: nostrip
-endif
-
 CFLAGS =-Wall -g
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
   CFLAGS +=-O0
@@ -16,91 +7,53 @@ else
   CFLAGS +=-O2
 endif
 
-CONFFLAGS =
-ifneq (,$(findstring diet,$(DEB_BUILD_OPTIONS)))
-  CONFFLAGS =--disable-zlib
-endif
-
-DIR =$(shell pwd)/debian/dropbear
-UTILS_DIR =$(shell pwd)/debian/dropbear-utils
-
 config.status: configure
 	CFLAGS='$(CFLAGS)'' -DSFTPSERVER_PATH="\"/usr/lib/sftp-server\""' \
 	  ./configure --host='$(DEB_HOST_GNU_TYPE)' \
 	    --build='$(DEB_BUILD_GNU_TYPE)' --prefix=/usr \
-	    --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info \
 	    $(CONFFLAGS)
 
-build: deb-checkdir build-stamp
+build: build-stamp
 build-stamp: config.status
+	dh_testdir
+
 	$(MAKE) PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp"
-	touch build-stamp
 
-clean: deb-checkdir deb-checkuid
-	-$(MAKE) distclean
-	rm -f build-stamp config.log config.status
-	rm -rf '$(DIR)'
-	rm -f debian/files debian/substvars debian/copyright changelog
+	touch $@
 
-install: deb-checkdir deb-checkuid build-stamp
-	rm -rf '$(DIR)' '$(UTILS_DIR)'
-	install -d -m0755 '$(DIR)'/etc/dropbear
-	# programs
-	install -d -m0755 '$(DIR)'/usr/sbin
-	install -m0755 dropbear '$(DIR)'/usr/sbin/dropbear
-	install -d -m0755 '$(DIR)'/usr/bin
-	install -m0755 dbclient '$(DIR)'/usr/bin/dbclient
-	install -m0755 scp '$(DIR)'/usr/bin/scp
-	install -m0755 dropbearkey '$(DIR)'/usr/bin/dropbearkey
-	install -d -m0755 '$(UTILS_DIR)'/usr/bin
-	install -m0755 dropbearconvert \
-	  '$(UTILS_DIR)'/usr/bin/dropbearconvert
-	$(STRIP) -R .comment -R .note '$(DIR)'/usr/sbin/* \
-	  '$(DIR)'/usr/bin/* '$(UTILS_DIR)'/usr/bin/*
-	# init and run scripts
-	install -d -m0755 '$(DIR)'/etc/init.d
-	install -m0755 debian/dropbear.init '$(DIR)'/etc/init.d/dropbear
-ifeq ($(INSTALL_DOCS),yes)
-	# man pages
-	install -d -m0755 '$(DIR)'/usr/share/man/man8
-	for i in dropbear.8 dropbearkey.8; do \
-	  install -m644 $$i '$(DIR)'/usr/share/man/man8/ || exit 1; \
-	done
-	gzip -9 '$(DIR)'/usr/share/man/man8/*.8
-	install -d -m0755 '$(DIR)'/usr/share/man/man1
-	install -m644 dbclient.1 '$(DIR)'/usr/share/man/man1/
-	gzip -9 '$(DIR)'/usr/share/man/man1/*.1
-	# copyright, changelog
-	cat debian/copyright.in LICENSE >debian/copyright
-	test -r changelog || ln -s CHANGES changelog
-endif
+clean:
+	dh_testdir
+	dh_testroot
+
+	[ ! -f Makefile ] || $(MAKE) distclean
+	rm -f config.status config.log dropbear/libtompcrypt/Makefile dropbear/libtommath/Makefile
+
+	dh_clean
+
+install: build-stamp
+	dh_testdir
+	dh_testroot
+	dh_prep
+
+	dh_installdirs
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp PROGRAMS="dropbear dbclient dropbearkey dropbearconvert scp"
 
 binary-indep:
 
-binary-arch: install dropbear.deb dropbear-utils.deb
-	dpkg-shlibdeps '$(DIR)'/usr/sbin/* '$(DIR)'/usr/bin/*
-	dpkg-gencontrol -isp -pdropbear -P'$(DIR)'
-	dpkg -b '$(DIR)' ..
-	dpkg-shlibdeps '$(UTILS_DIR)'/usr/bin/*
-	dpkg-gencontrol -isp -pdropbear-utils -P'$(UTILS_DIR)'
-	dpkg -b '$(UTILS_DIR)' ..
+binary-arch: install
+	dh_testdir
+	dh_testroot
+
+	dh_install
+	dh_link
+	dh_strip --dbg-package=dropbear-dbg
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_installinit --no-start -- start 20 2 . stop 20 0 6 .
+	dh_shlibdeps
+	dh_gencontrol
+	dh_builddeb
 
 binary: binary-arch binary-indep
-
-.PHONY: build clean install binary-indep binary-arch binary
-
-binary-indep:
-
-binary-arch: install dropbear.deb
-	test '$(CC)' != 'gcc' || \
-	  dpkg-shlibdeps '$(DIR)'/usr/sbin/* '$(DIR)'/usr/bin/* \
-	    '$(DIR)'/usr/lib/dropbear/*
-	dpkg-gencontrol -isp -pdropbear -P'$(DIR)'
-	dpkg -b '$(DIR)' ..
-
-binary: binary-arch binary-indep
-
-.PHONY: patch build clean install binary-indep binary-arch binary
->>>>>>> upstream/0.52:debian/rules
-
-include debian/implicit
+.PHONY: build clean binary-indep binary-arch binary install

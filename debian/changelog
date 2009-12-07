@@ -1,6 +1,7 @@
 dropbear (0.52-1) zelazny; urgency=low
 
   * New upstream release.
+  * Use debhelper for packaging.
 
  -- Mikhail Gusarov <dottedmag@dottedmag.net>  Mon, 07 Dec 2009 18:15:16 +0600
 

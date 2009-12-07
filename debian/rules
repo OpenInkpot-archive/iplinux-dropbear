@@ -89,4 +89,18 @@ binary: binary-arch binary-indep
 
 .PHONY: build clean install binary-indep binary-arch binary
 
+binary-indep:
+
+binary-arch: install dropbear.deb
+	test '$(CC)' != 'gcc' || \
+	  dpkg-shlibdeps '$(DIR)'/usr/sbin/* '$(DIR)'/usr/bin/* \
+	    '$(DIR)'/usr/lib/dropbear/*
+	dpkg-gencontrol -isp -pdropbear -P'$(DIR)'
+	dpkg -b '$(DIR)' ..
+
+binary: binary-arch binary-indep
+
+.PHONY: patch build clean install binary-indep binary-arch binary
+>>>>>>> upstream/0.52:debian/rules
+
 include debian/implicit

@@ -1,4 +1,4 @@
-# $Id: implicit,v 1.10 2004/07/03 15:20:00 pape Exp $
+# $Id: implicit,v 1.11 2005/11/29 21:57:55 pape Exp $
 
 .PHONY: deb-checkdir deb-checkuid
 
@@ -7,11 +7,7 @@ deb-checkdir:
 deb-checkuid:
 	@test "`id -u`" -eq 0 || sh -cx '! : need root privileges'
 
-ifeq ($(INSTALL_DOCS),yes)
 %.deb: %.deb-docs %.deb-DEBIAN
-else
-%.deb: %.deb-DEBIAN
-endif
 	@rm -f $*.deb $*.deb-checkdir $*.deb-docs $*.deb-docs-base \
 	  $*.deb-docs-docs $*.deb-docs-examples $*.deb-DEBIAN \
 	  $*.deb-DEBIAN-dir $*.deb-DEBIAN-scripts $*.deb-DEBIAN-md5sums
@@ -40,9 +36,16 @@ endif
 	@test -s debian/$*/usr/share/doc/$*/changelog || \
 	  sh -cx 'rm -f debian/$*/usr/share/doc/$*/changelog'
 	@gzip -9 debian/$*/usr/share/doc/$*/changelog*
-
 %.deb-docs-docs:
 	@for i in `cat debian/$*.docs 2>/dev/null || :`; do \
+	  if test -d $$i; then \
+	    sh -cx "install -d -m0755 debian/$*/usr/share/doc/$*/$${i##*/}" && \
+	    for j in $$i/*; do \
+	      sh -cx "install -m0644 $$j \
+	        debian/$*/usr/share/doc/$*/$${i##*/}/" || exit 1; \
+	    done || exit 1; \
+	    continue; \
+	  fi; \
 	  sh -cx "install -m0644 $$i debian/$*/usr/share/doc/$*/" || exit 1; \
 	done
 	@test ! -r debian/$*.README.Debian || \
@@ -53,7 +56,6 @@ endif
 	    debian/$*/usr/share/doc/$*/NEWS.Debian && \
 	      gzip -9 debian/$*/usr/share/doc/$*/NEWS.Debian'; \
 	fi
-
 %.deb-docs-examples:
 	@rm -rf debian/$*/usr/share/doc/$*/examples
 	: debian/$*/usr/share/doc/$*/examples/
@@ -63,7 +65,6 @@ endif
 	  sh -cx "install -m0644 $$i debian/$*/usr/share/doc/$*/examples/" \
 	    || exit 1; \
 	done
-
 %.deb-docs: %.deb-checkdir %.deb-docs-base %.deb-docs-docs %.deb-docs-examples
 	: debian/$*/usr/share/doc/$*/ ok
 

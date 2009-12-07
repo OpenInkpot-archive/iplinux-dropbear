@@ -1,3 +1,9 @@
+dropbear (0.52-1) zelazny; urgency=low
+
+  * New upstream release.
+
+ -- Mikhail Gusarov <dottedmag@dottedmag.net>  Mon, 07 Dec 2009 18:15:16 +0600
+
 dropbear (0.51-1.ip3) asimov; urgency=low
 
   * Improved key generation robustness: do not leave empty hostkey files
@@ -80,7 +86,7 @@ dropbear (0.47-1.slind0) unstable; urgency=low
 dropbear (0.47-1) unstable; urgency=high
 
   * New upstream release.
-  * SECURITY: Fix incorrect buffer sizing.
+  * SECURITY: Fix incorrect buffer sizing; CVE-2005-4178.
 
  -- Matt Johnston <matt@ucc.asn.au>  Thu, 8 Dec 2005 19:20:21 +0800
 

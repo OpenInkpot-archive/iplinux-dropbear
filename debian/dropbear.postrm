@@ -10,3 +10,5 @@ fi
 update-rc.d dropbear remove >/dev/null
 rm -f /etc/default/dropbear
 rm -rf /etc/dropbear/supervise /etc/dropbear/log/supervise
+
+#DEBHELPER#
